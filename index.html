@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Expense Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+    }
+    
+    h1 {
+      text-align: center;
+    }
+    
+    .form-container {
+      margin-bottom: 20px;
+    }
+    
+    .form-container label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .form-container input[type="text"],
+    .form-container input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .form-container button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .expense-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    .expense-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .expense-item span {
+      flex: 1;
+    }
+    
+    .expense-item button {
+      margin-left: 10px;
+      background-color: #f44336;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    .search-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .search-container input[type="text"] {
+      padding: 10px;
+      border-radius: 5px;
+    }
+    
+    .navbar {
+      background-color: #333;
+      overflow: hidden;
+    }
+    
+    .navbar a {
+      float: left;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+    
+    .navbar a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+    
+    .footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="#">Home</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+  
+  <div class="container">
+    <h1>Expense Tracker</h1>
+    
+    <div class="form-container">
+      <label for="expenseName">Expense Name</label>
+      <input type="text" id="expenseName" placeholder="Enter expense name...">
+      
+      <label for="expenseAmount">Expense Amount</label>
+      <input type="number" id="expenseAmount" placeholder="Enter expense amount...">
+      
+      <button onclick="addExpense()">Add Expense</button>
+    </div>
+    
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search expenses..." oninput="searchExpenses()">
+    </div>
+    
+    <ul class="expense-list" id="expenseList"></ul>
+  </div>
+  
+  <div class="footer">
+    <p>© 2023 Expense Tracker</p>
+  </div>
+
+  <script>
+    var expenses = [];
+
+    function addExpense() {
+      var expenseNameInput = document.getElementById('expenseName');
+      var expenseAmountInput = document.getElementById('expenseAmount');
+
+      var expenseName = expenseNameInput.value;
+      var expenseAmount = parseFloat(expenseAmountInput.value);
+
+      if (expenseName !== '' && !isNaN(expenseAmount)) {
+        var expense = {
+          name: expenseName,
+          amount: expenseAmount
+        };
+
+        expenses.push(expense);
+
+        expenseNameInput.value = '';
+        expenseAmountInput.value = '';
+
+        renderExpenses();
+      }
+    }
+
+    function deleteExpense(index) {
+      expenses.splice(index, 1);
+      renderExpenses();
+    }
+
+    function searchExpenses() {
+      var searchInput = document.getElementById('searchInput');
+      var searchValue = searchInput.value.toLowerCase();
+
+      var filteredExpenses = expenses.filter(function(expense) {
+  return expense.name.toLowerCase().includes(searchValue);
+      });
+
+      renderExpenses(filteredExpenses);
+    }
+
+    function renderExpenses(filteredExpenses) {
+      var expenseList = document.getElementById('expenseList');
+      expenseList.innerHTML = '';
+
+      var expensesToRender = filteredExpenses || expenses;
+
+      expensesToRender.forEach(function(expense, index) {
+        var li = document.createElement('li');
+        li.className = 'expense-item';
+
+        var nameSpan = document.createElement('span');
+        nameSpan.textContent = expense.name;
+
+        var amountSpan = document.createElement('span');
+        amountSpan.textContent = '$' + expense.amount.toFixed(2);
+
+        var deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = function() {
+          deleteExpense(index);
+        };
+
+        li.appendChild(nameSpan);
+        li.appendChild(amountSpan);
+        li.appendChild(deleteButton);
+
+        expenseList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
